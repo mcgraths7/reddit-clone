@@ -5,13 +5,15 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new
+    @user.username = user_params[:username]
+    @user.password = user_params[:password]
     if @user.save
       login!(@user)
-      flash(:notice) = "Welcome, #{@user.username}"
-      render @user
+      flash[:info] = "Welcome, #{@user.username}"
+      render :show
     else
-      flash.now(:errors) = 'There was a problem... Please try again.'
+      flash.now[:error] = 'There was a problem... Please try again.'
       render :new
     end
   end
@@ -19,7 +21,7 @@ class UsersController < ApplicationController
   def show
     @user = selected_user
     if @user
-      render @user
+      render :show
     else
       render :not_found
     end
@@ -33,10 +35,10 @@ class UsersController < ApplicationController
   def update
     @user = selected_user
     if @user.update(user_params)
-      flash[:notice] = 'Update successful!'
+      flash[:info] = 'Update successful!'
       render @user
     else
-      flash.now[:errors] = 'There was a problem... Please try again'
+      flash.now[:error] = 'There was a problem... Please try again'
       render :edit
     end
   end
