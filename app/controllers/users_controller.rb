@@ -1,4 +1,9 @@
 class UsersController < ApplicationController
+  def index
+    @users = User.all
+    render :index
+  end
+
   def new
     @user = User.new
     render :new
@@ -11,7 +16,7 @@ class UsersController < ApplicationController
     if @user.save
       login!(@user)
       flash[:info] = "Welcome, #{@user.username}"
-      render :show
+      redirect_to user_url(@user)
     else
       flash.now[:error] = 'There was a problem... Please try again.'
       render :new
@@ -54,7 +59,7 @@ class UsersController < ApplicationController
 
   private
   def user_params
-    params.require(:user).permit(:username, :password_digest)
+    params.require(:user).permit(:username, :password)
   end
 
   def selected_user
