@@ -1,0 +1,18 @@
+<% action = (user.persisted? ? user_url(user) : users_url ) %>
+<% method = (user.persisted? ? "patch" : "post") %>
+<% message = (user.persisted? ? "Update user" : "Create user") %>
+
+<%= render 'layouts/errors' %>
+<%= form_for @user, html: { class: "form" }, method: method, url: action do |f| %>
+  <%= f.label :username %>
+  <%= f.text_field :username, class: "userInputField" %>
+
+  <%= f.label :password %>
+  <%= f.password_field :password, class: "userInputField" %>
+
+  <%= f.label :password_confirmation, "Confirm Password" %>
+  <%= f.password_field :password_confirmation, class: "userInputField" %>
+
+  <%= f.submit "#{message}", class: "btn" %>
+
+<% end %>
