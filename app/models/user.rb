@@ -10,20 +10,20 @@
   # Ensures a session token is generated each time a new user object is initialized
   after_initialize :ensure_session_token
 
-  def find_by_credentials(username, password)
+  def self.find_by_credentials(username, password)
     user = User.find_by(username: username)
     return if user.nil?
-    user.is_password(password) ? user : nil
+    user.is_password?(password) ? user : nil
   end
 
   # Methods to create and verify password_digest from password
   def password=(pw)
     @password = pw
-    password_digest = BCrypt::Password.create(pw)
+    self.password_digest = BCrypt::Password.create(pw)
   end
 
-  def is_password(pw)
-    BCrypt::Password.new(pw).is_password(password_digest)
+  def is_password?(pw)
+    BCrypt::Password.new(password_digest).is_password?(pw)
   end
 
   # Methods to manage user session
