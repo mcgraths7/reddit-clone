@@ -1,0 +1,12 @@
+<%= render 'layouts/errors' %>
+<%= form_for :user, html: { class: "form" }, method: 'post', url: login_url do |f| %>
+  
+  <%= f.label :username %>
+  <%= f.text_field :username, class: "userInputField" %>
+
+  <%= f.label :password %>
+  <%= f.password_field :password, class: "userInputField" %>
+
+  <%= f.submit "Login", class: "btn" %>
+
+<% end %>
