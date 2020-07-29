@@ -1,18 +1,42 @@
-<% action = (user.persisted? ? user_url(user) : users_url ) %>
+<% action = (user.persisted? ? user_url(user) : signup_url ) %>
 <% method = (user.persisted? ? "patch" : "post") %>
-<% message = (user.persisted? ? "Update user" : "Sign up") %>
+<% message = (user.persisted? ? "Update" : "Sign up") %>
 
-<%= render 'layouts/errors' %>
-<%= form_for @user, html: { class: "form" }, method: method, url: action do |f| %>
-  <%= f.label :username %>
-  <%= f.text_field :username, class: "userInputField" %>
+<div class="row">
+  <div class="col-3"></div>
+  <div class="col-6">
 
-  <%= f.label :password %>
-  <%= f.password_field :password, class: "userInputField" %>
+    <div class="container login-container">
+      <div class="login-form-1">
 
-  <%= f.label :password_confirmation, "Confirm Password" %>
-  <%= f.password_field :password_confirmation, class: "userInputField" %>
+        <h3><%= message %></h3>
 
-  <%= f.submit "#{message}", class: "btn" %>
+        <%= form_for :user, method: method, url: action do |f| %>
+        
+          <div class="form-group">
+            <%= f.label :username %>      
+            <%= f.text_field :username, class: 'form-control' %>
+          </div>
 
-<% end %>
+          <div class="form-group">
+            <%= f.label :password %>
+            <%= f.password_field :password, class: 'form-control' %>
+          </div>
+
+          <% unless @user.persisted? %>
+            <div class="form-group">
+              <%= f.label :password_confirmation, "Confirm Password" %>
+              <%= f.password_field :password_confirmation, class: 'form-control' %>
+            </div>
+          <% end %>
+
+          <div class="form-group">
+            <%= f.submit "#{message}", class: 'btn btn-primary' %>
+          </div>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-3"></div>
+</div>

@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   add_flash_types :info, :error, :warning
-  helper_method :current_user, :login!, :logout!
+  helper_method :current_user, :login!, :logout!, :must_be_logged_in!
+  protect_from_forgery with: :exception
 
   def login!(user)
     @current_user = user
@@ -18,6 +19,9 @@ class ApplicationController < ActionController::Base
   end
 
   def must_be_logged_in!
-    
+    unless current_user
+      flash[:warning] = 'You must be logged in to do that.'
+      redirect_to login_url
+    end
   end
 end

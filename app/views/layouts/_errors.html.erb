@@ -1,9 +1,0 @@
-<% flash.each do |type, msg| %>
-  <% if type === :error %>
-    <p class="error-flash"><%= msg %></p>
-  <% elsif type === :warning %>
-    <p class="warning-flash"><%= msg %></p>
-  <% elsif type === :info %>
-    <p class="info-flash"><%= msg %></p>
-  <% end %>
-<% end %>

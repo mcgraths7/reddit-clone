@@ -21,6 +21,35 @@
            foreign_key: :moderator_id,
            primary_key: :id,
            dependent: :destroy
+  has_many :subscriptions
+  has_many :subscribed_topics,
+           class_name: :Topic,
+           through: :subscriptions,
+           source: :topic
+  # has_many :feed_posts,
+  #          class_name: :Post,
+  #          through: :subscribed_topics,
+  #          source: :posts
+
+
+  def feed_posts
+    feed_posts = []
+    subscribed_topics.each { |topic| feed_posts << topic.posts }
+    feed_posts.flatten
+  end
+
+  def subscribe_to(topic_id)
+    topic = Topic.find_by(id: topic_id)
+    if topic
+      s = Subscription.new(user_id: self.id, topic_id: topic.id)
+    else
+      errors[:topic] << 'not found'
+    end
+
+    unless s.save
+      errors[:topic] << 'could not subscribe'
+    end
+  end
 
   def self.find_by_credentials(username, password)
     user = User.find_by(username: username)

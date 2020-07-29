@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_23_125616) do
+ActiveRecord::Schema.define(version: 2020_07_29_211453) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -18,29 +18,38 @@ ActiveRecord::Schema.define(version: 2020_07_23_125616) do
   create_table "posts", force: :cascade do |t|
     t.string "title", null: false
     t.string "url"
-    t.text "content"
+    t.text "content", null: false
     t.integer "author_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string "topic_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
     t.integer "topic_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "created_at"
+    t.index ["user_id"], name: "index_subscriptions_on_user_id"
   end
 
   create_table "topics", force: :cascade do |t|
     t.string "title", null: false
     t.text "description", null: false
     t.integer "moderator_id", null: false
+    t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["title"], name: "index_topics_on_title"
+    t.index ["slug"], name: "index_topics_on_slug", unique: true
+    t.index ["title"], name: "index_topics_on_title", unique: true
   end
 
   create_table "users", force: :cascade do |t|
     t.string "username", null: false
-    t.string "password_digest"
+    t.string "password_digest", null: false
+    t.string "session_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "session_token", null: false
-    t.index ["username"], name: "index_users_on_username"
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
 end
