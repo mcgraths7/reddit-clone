@@ -10,11 +10,9 @@ class SessionsController < ApplicationController
         render :login
       end
     else
-
       @user = User.find_by_credentials(
-      params[:user][:username],
-      params[:user][:password]
-    )
+        params[:user][:username],
+        params[:user][:password])
 
       if @user.nil?
         flash.now[:error] = 'Invalid username or password'
@@ -22,7 +20,7 @@ class SessionsController < ApplicationController
       else
         flash[:info] = 'Login successful!'
         login!(@user)
-        redirect_to user_url(@user)
+        redirect_to feed_url
       end
     end
   end
