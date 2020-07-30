@@ -25,24 +25,33 @@
   <% end %>
 </div>
 <div class="container">
-<h4>Comments</h4>
 
-<% if @post.comments.empty? %>
+<div class="container">
 
-  <p>It's quiet... Too quiet. Be the first to comment!</p>
+  <h4>Comments</h4>
 
-<% else %>
-  <ul class="list-group">
-    <% @post.top_level_comments.order(updated_at: :desc).each do |comment| %>
-    <li class="list-group-item">
-      <strong><%= comment.author_username %></strong>
-      <p><%= comment.content %></p>
-      <small><%= comment.readable_timestamp(comment.created_at) %></small>
-      <%= link_to 'View thread', comment_url(comment) %>
-      <br>
-    </li>
-    <% end %>
+  <% if @post.top_level_comments.empty? %>
+
+    <p>It's quiet... Too quiet. Be the first to comment!</p>
+
+  <% else %>
+    <ul class="list-group">
+      <% @comments_by_parent[nil].select { |c| c.parent_comment_id.nil? }.each do |top_level_comment| %>
+        <li class="list-group-item">
+          <%= render("comments/comment", comment: top_level_comment, comments_by_parent: @comments_by_parent) %>
+        </li>
+      <% end %>
   </ul>
-  
-<% end %>
+  <% end %>
+
 </div>
+
+
+      <%# comments_by_parent = @post.comments_by_parent %>
+      <%# comments_by_parent[nil].each do |top_level_comment| %>
+        <%# <li class="list-group-item"> %>
+          <%#= render("comments/comment",
+                    # comment: top_level_comment,
+                    # comments_by_parent: comments_by_parent) %>
+        <%# </li> %>
+      <%# end %>

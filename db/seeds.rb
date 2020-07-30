@@ -81,3 +81,5 @@ c = Comment.find_by(id: 1)
   end
 end
 puts "Child comments generated!"
+
+puts c.post_id

@@ -17,6 +17,7 @@ class CommentsController < ApplicationController
   def show
     @comment = set_comment
     @post = set_post
+    @comments_by_parent = set_post.comments_by_parent
     render :show
   end
 

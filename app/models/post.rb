@@ -24,4 +24,14 @@ class Post < ApplicationRecord
   def author_uname
     author.username
   end
+
+  def comments_by_parent
+    comments_by_parent = Hash.new { |hash, key| hash[key] = [] }
+
+    self.comments.includes(:author).each do |comment|
+      comments_by_parent[comment.parent_comment_id] << comment
+    end
+
+    comments_by_parent
+  end
 end

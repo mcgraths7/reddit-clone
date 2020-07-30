@@ -11,12 +11,8 @@ class Comment < ApplicationRecord
            class_name: :Comment,
            foreign_key: :parent_comment_id,
            dependent: :destroy
-
-  def find_author
-    User.find_by(id: self.author_id)
-  end
           
   def author_username
-    find_author.username
+    author.username
   end
 end
