@@ -9,7 +9,7 @@
 # end
 # puts "Users generated!"
 
-# user_count = User.all.count
+user_count = User.all.count
 # puts "Generating topics..."
 # 100.times do
 #   t = Topic.new
@@ -23,7 +23,7 @@
 # end
 # puts "Topics generated!"
 
-# topic_count = Topic.all.count
+topic_count = Topic.all.count
 # puts "Generating posts..."
 # 1000.times do 
 #   post = Post.new
@@ -53,10 +53,33 @@
 # u.password = 'P4nth3r$'
 # u.save
 
-u = User.last
-u.subscribe_to(1)
-u.subscribe_to(2)
-u.subscribe_to(3)
-u.subscribe_to(4)
-u.subscribe_to(5)
-u.subscribe_to(6)
+# u.subscribe_to(1)
+# u.subscribe_to(2)
+# u.subscribe_to(3)
+# u.subscribe_to(4)
+# u.subscribe_to(5)
+# u.subscribe_to(6)
+post_count = Post.all.count
+
+puts "Generating comments..."
+10000.times do
+  author_id = 1 + rand(user_count)
+  post_id = 1 + rand(post_count)
+  comment = Comment.new(author_id: author_id, post_id: post_id, content: Faker::Lorem.sentence)
+  unless comment.save
+    next
+  end
+end
+puts "Comments generated!"
+
+puts "Generating child comments"
+c = Comment.find_by(id: 1)
+10.times do
+  child = Comment.new(content: "child comment", author_id: 26, post_id: c.post_id, parent_comment_id: c.id)
+  unless child.save
+    next
+  end
+end
+puts "Child comments generated!"
+
+puts c.post_id

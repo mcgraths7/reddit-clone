@@ -6,7 +6,7 @@
       <small><%= post.url %></small>
     <% end %>
     <p><%= post.short_content %></p>
-    <span class="badge">Posted at: <%= post.created_at %> | Last updated: <%= post.updated_at %></span>
+    <span class="badge">Posted <%= post.readable_timestamp(post.created_at) %> | Last updated <%= post.readable_timestamp(post.updated_at) %></span>
   </div>
   <% end %>
 </div>
