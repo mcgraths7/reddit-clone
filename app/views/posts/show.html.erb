@@ -1,12 +1,30 @@
-<h2><%= @post.title %></h2>
-<% if @post.url %>
-  <small><%= @post.url %></small>
-<% end %>
-<p><%= @post.content %></p>
-<span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %> | Last updated <%= @post.readable_timestamp(@post.updated_at) %></span>
+<div class="container">
+  <h2><%= @post.title %></h2>
+  <% if @post.url %>
+    <small><%= @post.url %></small>
+  <% end %>
+  <p><%= @post.content %></p>
+  <span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %> | Last updated <%= @post.readable_timestamp(@post.updated_at) %></span>
+  <br>
+</div>
 <br>
-<%= link_to "Add comment", post_comments_new_url(@post) %>
+<div class="container">
+  <p>Add comment</p>
+  <%= form_for :comment, method: 'post', url: comments_url do |f| %>
+  
+    <div class="form-group">
+      <%= f.text_area :content, class: 'form-control' %>
+    </div>
 
+    <input type="hidden" name="comment[post_id]" value="<%= @post.id %>">
+
+    <div class="form-group">
+      <%= f.submit "Reply", class: 'btn btn-primary' %>
+    </div>
+
+  <% end %>
+</div>
+<div class="container">
 <h4>Comments</h4>
 
 <% if @post.comments.empty? %>
@@ -14,12 +32,17 @@
   <p>It's quiet... Too quiet. Be the first to comment!</p>
 
 <% else %>
-  
-  <% @post.top_level_comments.order(updated_at: :desc).each do |comment| %>
-    <strong><%= comment.author_username %></strong>
-    <p><%= comment.content %></p>
-    <small><%= comment.readable_timestamp(comment.created_at) %></small>
-    <br>
-  <% end %>
+  <ul class="list-group">
+    <% @post.top_level_comments.order(updated_at: :desc).each do |comment| %>
+    <li class="list-group-item">
+      <strong><%= comment.author_username %></strong>
+      <p><%= comment.content %></p>
+      <small><%= comment.readable_timestamp(comment.created_at) %></small>
+      <%= link_to 'View thread', comment_url(comment) %>
+      <br>
+    </li>
+    <% end %>
+  </ul>
   
 <% end %>
+</div>

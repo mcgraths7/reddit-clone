@@ -1,0 +1,36 @@
+<div class="container">
+<strong><%= @comment.author_username %></strong>
+<p><%= @comment.content %></p>
+<small><%= @comment.readable_timestamp(@comment.created_at) %></small>
+</div>
+<div class="container">
+
+  <%= form_for :reply, method: 'post', url: comments_url do |f| %>
+  
+    <div class="form-group">
+      <%= f.label :content %>      
+      <%= f.text_area :content, class: 'form-control' %>
+    </div>
+
+    <input type="hidden" name="reply[post_id]" value="<%= @post.id %>">
+    <input type="hidden" name="reply[parent_comment_id]" value="<%= @comment.id %>">
+
+    <div class="form-group">
+      <%= f.submit "Reply", class: 'btn btn-primary' %>
+    </div>
+
+  <% end %>
+</div>
+
+<div class="container">
+  <ul class="list-group">
+    <% @comment.child_comments.order(created_at: 'desc').each do |child| %>
+    <li class="list-group-item">
+      <strong><%= child.author_username %></strong>
+      <p><%= child.content %></p>
+      <small><%= child.readable_timestamp(child.created_at) %></small>
+      <br>
+    </li>
+    <% end %>
+  </ul>
+</div>
