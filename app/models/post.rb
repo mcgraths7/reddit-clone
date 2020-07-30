@@ -6,6 +6,7 @@ class Post < ApplicationRecord
              foreign_key: :author_id,
              primary_key: :id
   belongs_to :topic
+  has_many :comments
   
 
   def short_content
@@ -14,6 +15,10 @@ class Post < ApplicationRecord
     else
       content
     end
+  end
+
+  def top_level_comments
+    self.comments.where(parent_comment_id: nil)
   end
 
   def author_uname

@@ -3,4 +3,23 @@
   <small><%= @post.url %></small>
 <% end %>
 <p><%= @post.content %></p>
-<span class="badge">Posted at: <%= @post.created_at %> | Last updated: <%= @post.updated_at %></span>
+<span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %> | Last updated <%= @post.readable_timestamp(@post.updated_at) %></span>
+<br>
+<%= link_to "Add comment", post_comments_new_url(@post) %>
+
+<h4>Comments</h4>
+
+<% if @post.comments.empty? %>
+
+  <p>It's quiet... Too quiet. Be the first to comment!</p>
+
+<% else %>
+  
+  <% @post.top_level_comments.order(updated_at: :desc).each do |comment| %>
+    <strong><%= comment.author_username %></strong>
+    <p><%= comment.content %></p>
+    <small><%= comment.readable_timestamp(comment.created_at) %></small>
+    <br>
+  <% end %>
+  
+<% end %>
