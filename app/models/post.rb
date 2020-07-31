@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   extend FriendlyId
+  extend PaginatedRecord
   include Votable
 
   friendly_id :title, use: :slugged
@@ -12,7 +13,6 @@ class Post < ApplicationRecord
              foreign_key: :author_id,
              inverse_of: :posts
   has_many :comments, inverse_of: :post
-  
 
   def short_content
     if content.length > 50

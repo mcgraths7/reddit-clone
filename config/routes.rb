@@ -5,7 +5,9 @@ Rails.application.routes.draw do
     get 'comments/new' => 'comments#new', as: 'new_comment'
   end
   resources :comments, only: [:create, :show, :edit, :destroy]
-  get 'feed' => 'topics#index'
+  get 'feed' => 'topics#feed'
+  get '/topics/:id/subscribe' => 'topics#subscribe', as: 'subscribe'
+  get '/topics/:id/unsubscribe' => 'topics#unsubscribe', as: 'unsubscribe'
   get 'signup' => 'users#new'
   post 'signup' => 'users#create'
   get 'login' => 'sessions#new'
@@ -15,4 +17,6 @@ Rails.application.routes.draw do
   get 'posts/:id/downvote' => 'posts#downvote', as: 'downvote_post'
   get 'comments/:id/upvote' => 'comments#upvote', as: 'upvote_comment'
   get 'comments/:id/downvote' => 'comments#downvote', as: 'downvote_comment'
+
+  root to: 'topics#feed'
 end

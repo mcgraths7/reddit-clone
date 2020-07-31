@@ -23,6 +23,10 @@
            class_name: :Topic,
            through: :subscriptions,
            source: :topic
+  has_many :subscribed_posts,
+           class_name: :Post,
+           through: :subscribed_topics,
+           source: :posts
   has_many :posts, inverse_of: :author,
            dependent: :destroy
   has_many :comments,
@@ -35,14 +39,6 @@
            class_name: :Post,
            through: :subscribed_topics,
            source: :posts
-
-  def feed_posts_ordered_by_karma
-    feed_posts.order(karma: 'desc')
-  end
-
-  def paginate_feed_posts_ordered_by_karma(page_param)
-    feed_posts_ordered_by_karma.page(page_param)
-  end
 
   def subscribe_to(topic_id)
     topic = Topic.find_by(id: topic_id)
