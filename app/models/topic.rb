@@ -4,7 +4,6 @@ class Topic < ApplicationRecord
 
   has_one :moderator,
           class_name: :User,
-          foreign_key: :id,
           primary_key: :moderator_id
   has_many :posts,
            dependent: :destroy

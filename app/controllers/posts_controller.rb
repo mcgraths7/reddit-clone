@@ -51,6 +51,30 @@ class PostsController < ApplicationController
     end
   end
 
+  def upvote
+    post = set_post
+    author = User.find(post.author_id)
+    post.votes << Vote.create(user_id: author.id, value: 1)
+    if post.update(karma: post.karma + 1) && author.update(post_karma: author.post_karma + 1)
+      show
+    else
+      flash.now[:error] = 'There was a problem upvoting.'
+      show
+    end
+  end
+
+  def downvote
+    post = set_post
+    author = User.find(post.author_id)
+    post.votes << Vote.create(user_id: author.id, value: -1)
+    if post.update(karma: post.karma - 1) && author.update(post_karma: author.post_karma - 1)
+      show
+    else
+      flash.now[:error] = 'There was a problem upvoting.'
+      show
+    end
+  end
+
   private
   def post_params
     params.require(:post).permit(:title, :content, :url, :topic_id)

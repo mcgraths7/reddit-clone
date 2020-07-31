@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_30_141304) do
+ActiveRecord::Schema.define(version: 2020_07_30_215025) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,8 +22,12 @@ ActiveRecord::Schema.define(version: 2020_07_30_141304) do
     t.integer "parent_comment_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "votable_type"
+    t.bigint "votable_id"
+    t.integer "karma", default: 0
     t.index ["author_id"], name: "index_comments_on_author_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["votable_type", "votable_id"], name: "index_comments_on_votable_type_and_votable_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -34,6 +38,10 @@ ActiveRecord::Schema.define(version: 2020_07_30_141304) do
     t.string "topic_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "votable_type"
+    t.bigint "votable_id"
+    t.integer "karma", default: 0
+    t.index ["votable_type", "votable_id"], name: "index_posts_on_votable_type_and_votable_id"
   end
 
   create_table "subscriptions", force: :cascade do |t|
@@ -60,7 +68,18 @@ ActiveRecord::Schema.define(version: 2020_07_30_141304) do
     t.string "session_token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "comment_karma", default: 0
+    t.integer "post_karma", default: 0
     t.index ["username"], name: "index_users_on_username", unique: true
+  end
+
+  create_table "votes", force: :cascade do |t|
+    t.integer "value"
+    t.integer "user_id"
+    t.string "votable_type"
+    t.integer "votable_id"
+    t.index ["votable_id"], name: "index_votes_on_votable_id"
+    t.index ["votable_type"], name: "index_votes_on_votable_type"
   end
 
 end

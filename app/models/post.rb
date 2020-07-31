@@ -1,12 +1,14 @@
 class Post < ApplicationRecord
-  validates :title, :author_id, :content, presence: true
+  include Votable
+  
+  validates :title, :content, presence: true
 
+  belongs_to :topic
   belongs_to :author,
              class_name: :User,
              foreign_key: :author_id,
-             primary_key: :id
-  belongs_to :topic
-  has_many :comments
+             inverse_of: :posts
+  has_many :comments, inverse_of: :post
   
 
   def short_content
@@ -21,8 +23,12 @@ class Post < ApplicationRecord
     self.comments.where(parent_comment_id: nil)
   end
 
-  def author_uname
+  def author_username
     author.username
+  end
+
+  def topic_title
+    topic.title
   end
 
   def comments_by_parent
