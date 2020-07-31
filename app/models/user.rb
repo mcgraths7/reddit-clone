@@ -1,4 +1,7 @@
  class User < ApplicationRecord
+  extend FriendlyId
+
+  friendly_id :username, use: :slugged
   # Need this to be able to verify password_digest, since we don't save password in db
   attr_reader :password
 
@@ -15,6 +18,7 @@
            foreign_key: :moderator_id,
            primary_key: :id,
            inverse_of: :moderator
+  has_many :subscriptions
   has_many :subscribed_topics,
            class_name: :Topic,
            through: :subscriptions,
@@ -27,11 +31,17 @@
   has_many :votes,
            inverse_of: :user,
            dependent: :destroy
+  has_many :feed_posts,
+           class_name: :Post,
+           through: :subscribed_topics,
+           source: :posts
 
-  def feed_posts
-    feed_posts = []
-    subscribed_topics.each { |topic| feed_posts << topic.posts }
-    feed_posts.flatten.sort_by { |post| post.karma }.reverse
+  def feed_posts_ordered_by_karma
+    feed_posts.order(karma: 'desc')
+  end
+
+  def paginate_feed_posts_ordered_by_karma(page_param)
+    feed_posts_ordered_by_karma.page(page_param)
   end
 
   def subscribe_to(topic_id)

@@ -1,5 +1,5 @@
 <div class="container">
-  <% @paginated_feed_posts.each do |post| %>
+  <% @paginated_posts.each do |post| %>
   <div class="col-md-12">
     <h2><span class="badge"><%= post.karma %></span><%= link_to "#{post.title}", post_url(post) %></h2>
     <% if post.url %>
@@ -19,7 +19,7 @@
       <div class="col-md-6">
 
         <ul class="pagination pagination-lg justify-content-left">
-          <li class="page-item"><%= link_to_previous_page @feed_posts, 'Previous Page' %></li>
+          <li class="page-item"><%= link_to_previous_page @paginated_posts, 'Previous Page' %></li>
         </ul>
       
       </div>
@@ -27,7 +27,7 @@
       <div class="col-md-6">
       
         <ul class="pagination pagination-lg justify-content-end">
-          <li class="page-item"><%= link_to_next_page @feed_posts, 'Next Page' %></li>
+          <li class="page-item"><%= link_to_next_page @paginated_posts, 'Next Page' %></li>
         </ul>
       
       </div>

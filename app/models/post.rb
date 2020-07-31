@@ -1,5 +1,8 @@
 class Post < ApplicationRecord
+  extend FriendlyId
   include Votable
+
+  friendly_id :title, use: :slugged
   
   validates :title, :content, presence: true
 

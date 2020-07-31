@@ -1,4 +1,8 @@
 class Topic < ApplicationRecord
+  extend FriendlyId
+
+  friendly_id :title, use: :slugged
+  
   validates :title, :description, :moderator_id, presence: true
   validates :title, uniqueness: true
 
@@ -13,6 +17,14 @@ class Topic < ApplicationRecord
            source: :user
 
   before_create :set_slug
+
+  def posts_ordered_by_karma
+    posts.order(karma: 'desc')
+  end
+
+  def paginated_posts_ordered_by_karma(page_param)
+    posts_ordered_by_karma.page(page_param)
+  end
 
   def self.to_options
     Topic.all.map do |topic|
