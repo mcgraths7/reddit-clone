@@ -21,6 +21,35 @@ class CommentsController < ApplicationController
     render :show
   end
 
+
+  def upvote
+    comment = set_comment
+    author = User.find(comment.author_id)
+    v = Vote.new(user_id: author.id, value: 1)
+    if v.save
+      comment.votes << v
+    end
+    fail
+    if comment.update(karma: comment.karma + 1) && author.update(comment_karma: author.comment_karma + 1)
+      redirect_to post_url(comment.post)
+    else
+      flash[:error] = 'There was a problem upvoting.'
+      redirect_to post_url(comment.post)
+    end
+  end
+
+  def downvote
+    comment = set_comment
+    author = User.find(comment.author_id)
+    comment.votes << Vote.create(user_id: author.id, value: -1)
+    if comment.update(karma: comment.karma - 1) && author.update(comment_karma: author.comment_karma - 1)
+      redirect_to post_url(comment.post)
+    else
+      flash[:error] = 'There was a problem upvoting.'
+      redirect_to post_url(comment.post)
+    end
+  end
+
   private
 
   # This allows me to save either a child comment or top level without repeating code

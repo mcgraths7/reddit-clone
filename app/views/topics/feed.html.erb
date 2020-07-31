@@ -1,12 +1,15 @@
 <div class="container">
   <% @feed_posts.each do |post| %>
   <div class="col-md-12">
-    <h2><%= link_to "#{post.title}", post_url(post) %></h2>
+    <h2><span class="badge"><%= post.karma %></span><%= link_to "#{post.title}", post_url(post) %></h2>
     <% if post.url %>
       <small><%= post.url %></small>
     <% end %>
     <p><%= post.short_content %></p>
-    <span class="badge">Posted <%= post.readable_timestamp(post.created_at) %> | Last updated <%= post.readable_timestamp(post.updated_at) %></span>
+    <span class="badge">Posted <%= post.readable_timestamp(post.created_at) %>  
+        by <%= link_to post.author_username, user_url(post.author) %> to 
+        <%=link_to post.topic_title, topic_url(post.topic) %>
+    </span>
   </div>
   <% end %>
 </div>

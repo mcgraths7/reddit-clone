@@ -1,7 +1,8 @@
 <div class="container">
-<strong><%= @comment.author_username %></strong>
+<strong><span><%= @comment.karma %></span> | <%= @comment.author_username %></strong>
 <p><%= @comment.content %></p>
 <small><%= @comment.readable_timestamp(@comment.created_at) %></small>
+<small><%= link_to "Upvote", upvote_comment_url(@comment) %> | <span><%= link_to "Downvote", downvote_comment_url(@comment) %></span></small>
 </div>
 <div class="container">
 

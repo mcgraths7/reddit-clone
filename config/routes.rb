@@ -11,4 +11,8 @@ Rails.application.routes.draw do
   get 'login' => 'sessions#new'
   post 'login' => 'sessions#create'
   get 'logout' => 'sessions#destroy'
+  get 'posts/:id/upvote' => 'posts#upvote', as: 'upvote_post'
+  get 'posts/:id/downvote' => 'posts#downvote', as: 'downvote_post'
+  get 'comments/:id/upvote' => 'comments#upvote', as: 'upvote_comment'
+  get 'comments/:id/downvote' => 'comments#downvote', as: 'downvote_comment'
 end

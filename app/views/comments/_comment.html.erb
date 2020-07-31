@@ -1,7 +1,10 @@
 <div class="container">
-  <strong><%= comment.author_username %></strong>
+  <strong><span class="badge"><%= comment.karma %></span> | <%= comment.author_username %></strong>
   <p><%= comment.content %></p>
   <small><%= comment.readable_timestamp(comment.created_at) %></small>
+  <br>
+  <small><%= link_to "Upvote", upvote_comment_url(comment), method: :post %> | <span><%= link_to "Downvote", downvote_comment_url(comment), method: :post %></span></small>
+  <br>
   <%= link_to 'View thread', comment_url(comment) %>
   <ul class="list-group">
     <% comments_by_parent[comment.id].select { |c| c.parent_comment_id === comment.id }.each do |child_comment| %>
@@ -11,10 +14,3 @@
     <% end %>
   </ul>
 </div>
-
-<%# <% comments_by_parent[comment.id].each do |child_comment| %>
-      <%# <li class="list-group-item"> %>
-        <%# <%= render("comments/comment", comment: child_comment, %>
-                    <%# # comments_by_parent: comments_by_parent) %>
-      <%# </li> %>
-    <%# <% end %>

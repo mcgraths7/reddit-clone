@@ -1,10 +1,13 @@
 <div class="container">
-  <h2><%= @post.title %></h2>
+  <h2><span class="badge"><%= @post.karma %></span><%= @post.title %></h2>
   <% if @post.url %>
     <small><%= @post.url %></small>
   <% end %>
   <p><%= @post.content %></p>
-  <span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %> | Last updated <%= @post.readable_timestamp(@post.updated_at) %></span>
+    <span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %>  
+        by <%= link_to @post.author_username, user_url(@post.author) %> to 
+        <%=link_to @post.topic_title, topic_url(@post.topic) %>
+    </span>
   <br>
 </div>
 <br>
@@ -43,15 +46,5 @@
       <% end %>
   </ul>
   <% end %>
-
+  <%= link_to "Back to feed", feed_url %>
 </div>
-
-
-      <%# comments_by_parent = @post.comments_by_parent %>
-      <%# comments_by_parent[nil].each do |top_level_comment| %>
-        <%# <li class="list-group-item"> %>
-          <%#= render("comments/comment",
-                    # comment: top_level_comment,
-                    # comments_by_parent: comments_by_parent) %>
-        <%# </li> %>
-      <%# end %>
