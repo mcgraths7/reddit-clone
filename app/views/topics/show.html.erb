@@ -1,4 +1,7 @@
 <div class="container">
+  <h2><%= @topic.title %></h2>
+  <p><%= @topic.description %></p>
+  <small>A community since <%= @topic.created_at.year %> | <%= @topic.sub_count %> subscriber(s)</small>
   <% @paginated_posts.each do |post| %>
   <div class="col-md-12">
     <h2><span class="badge"><%= post.karma %></span><%= link_to "#{post.title}", post_url(post) %></h2>

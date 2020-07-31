@@ -11,6 +11,7 @@ class Topic < ApplicationRecord
           primary_key: :moderator_id
   has_many :posts,
            dependent: :destroy
+  has_many :subscriptions
   has_many :subscribers,
            class_name: :User,
            through: :subscriptions,
@@ -24,6 +25,10 @@ class Topic < ApplicationRecord
 
   def paginated_posts_ordered_by_karma(page_param)
     posts_ordered_by_karma.page(page_param)
+  end
+
+  def sub_count
+    subscribers.count
   end
 
   def self.to_options
