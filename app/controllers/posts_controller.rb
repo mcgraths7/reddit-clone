@@ -81,7 +81,7 @@ class PostsController < ApplicationController
   end
 
   def set_post
-    Post.find_by(id: params[:id])
+    Post.friendly.find(params[:id])
   end
 
   def topic_param

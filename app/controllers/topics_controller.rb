@@ -3,7 +3,7 @@ class TopicsController < ApplicationController
   before_action :topic_must_exist, only: [:show, :edit, :update, :destroy]
   before_action :must_be_logged_in!
   def index
-    @feed_posts = current_user.feed_posts
+    @feed_posts = current_user.paginate_feed_posts_ordered_by_karma(params[:page])
     render :feed
   end
 
@@ -56,7 +56,7 @@ class TopicsController < ApplicationController
   end
 
   def set_topic
-    Topic.find_by(id: params[:id])
+    Topic.friendly.find(params[:id])
   end
 
   def only_moderator_can_edit_topic

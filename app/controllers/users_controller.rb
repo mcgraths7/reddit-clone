@@ -58,6 +58,6 @@ class UsersController < ApplicationController
   end
 
   def selected_user
-    User.find_by(id: params[:id])
+    User.friendly.find(params[:id])
   end
 end

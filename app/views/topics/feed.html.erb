@@ -12,4 +12,25 @@
     </span>
   </div>
   <% end %>
+  <nav aria-label="Feed Navigation">
+
+    <div class="row">
+
+      <div class="col-md-6">
+
+        <ul class="pagination pagination-lg justify-content-left">
+          <li class="page-item"><%= link_to_previous_page @feed_posts, 'Previous Page' %></li>
+        </ul>
+      
+      </div>
+      
+      <div class="col-md-6">
+      
+        <ul class="pagination pagination-lg justify-content-end">
+          <li class="page-item"><%= link_to_next_page @feed_posts, 'Next Page' %></li>
+        </ul>
+      
+      </div>
+    </div>
+  </nav>
 </div>
