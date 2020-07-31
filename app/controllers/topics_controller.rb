@@ -3,7 +3,7 @@ class TopicsController < ApplicationController
   before_action :topic_must_exist, only: [:show, :edit, :update, :destroy]
   before_action :must_be_logged_in!
   def index
-    @feed_posts = current_user.paginate_feed_posts_ordered_by_karma(params[:page])
+    @paginated_feed_posts = current_user.paginate_feed_posts_ordered_by_karma(params[:page])
     render :feed
   end
 
@@ -26,6 +26,7 @@ class TopicsController < ApplicationController
 
   def show
     @topic = set_topic
+    @paginated_posts = set_topic.paginate_posts_ordered_by_karma(params[:page])
     render :show
   end
 

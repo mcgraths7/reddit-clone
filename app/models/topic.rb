@@ -18,6 +18,14 @@ class Topic < ApplicationRecord
 
   before_create :set_slug
 
+  def posts_ordered_by_karma
+    posts.order(karma: 'desc')
+  end
+
+  def paginated_posts_ordered_by_karma(page_param)
+    posts_ordered_by_karma.page(page_param)
+  end
+
   def self.to_options
     Topic.all.map do |topic|
       [
