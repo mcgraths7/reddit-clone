@@ -7,7 +7,7 @@ module Votable
       class_name: :Vote,
       dependent: :destroy
 
-    before_save(on: :update) do
+    after_save do
       update_hotness
     end
   end
@@ -15,7 +15,7 @@ module Votable
   private
   def multipliers
     multipliers = {}
-    (0..48).reduce(2.0) do |multiplier, hour|
+    (0..24).reduce(2.0) do |multiplier, hour|
       multipliers[hour] = multiplier
       multiplier -= 0.041
     end
@@ -31,7 +31,11 @@ module Votable
   end
 
   def hotness_score
-    karma * multipliers[time_ago_in_hours]
+    if time_ago_in_hours <= 24
+      karma * multipliers[time_ago_in_hours]
+    else
+      karma
+    end
   end
 
   def update_hotness

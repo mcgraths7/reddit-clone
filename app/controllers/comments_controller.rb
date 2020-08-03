@@ -27,8 +27,7 @@ class CommentsController < ApplicationController
   def upvote
     comment = set_comment
     author = User.find(comment.author_id)
-    v = Vote.new(user_id: author.id, value: 1)
-    comment.votes << Vote.create(user_id: author.id, value: 1)
+    comment.votes << Vote.create(user_id: current_user.id, value: 1)
     if comment.update(karma: comment.karma + 1) && author.update(comment_karma: author.comment_karma + 1)
       redirect_to post_url(comment.post)
     else
@@ -40,7 +39,7 @@ class CommentsController < ApplicationController
   def downvote
     comment = set_comment
     author = User.find(comment.author_id)
-    comment.votes << Vote.create(user_id: author.id, value: -1)
+    comment.votes << Vote.create(user_id: current_user.id, value: -1)
     if comment.update(karma: comment.karma - 1) && author.update(comment_karma: author.comment_karma - 1)
       redirect_to post_url(comment.post)
     else

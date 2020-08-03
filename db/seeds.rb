@@ -7,10 +7,7 @@ puts "Generating users..."
     next
   end
 end
-u = User.new
-u.username = 'joebizness'
-u.password = 'P4nth3r$'
-u.save
+
 
 puts "Users generated!"
 
@@ -27,12 +24,7 @@ puts "Generating topics..."
   end
 end
 puts "Topics generated!"
-u.subscribe_to(1)
-u.subscribe_to(2)
-u.subscribe_to(3)
-u.subscribe_to(4)
-u.subscribe_to(5)
-u.subscribe_to(6)
+
 
 topic_count = Topic.all.count
 puts "Generating posts..."
@@ -97,7 +89,7 @@ puts "Generating post votes"
   user = User.find(user_id)
   post.votes << Vote.create(user_id: user_id, value: value)
   post.update(karma: post.karma + 1)
-  user.update(post_karma: user.post_karma + 1)
+  user.update(post_karma: post.author.post_karma + 1)
 end
 puts "Post votes generated"
 
@@ -107,5 +99,18 @@ puts "Generating comment votes"
   user = User.find(1 + rand(user_count))
   comment.votes << Vote.create(user_id: user.id, value: 1)
   comment.update(karma: comment.karma + 1)
-  user.update(comment_karma: user.comment_karma + 1)
+  user.update(comment_karma: comment.author.comment_karma + 1)
 end
+puts "Comment votes generated"
+
+puts "Generating joebizness"
+u = User.new
+u.username = 'joebizness'
+u.password = 'P4nth3r$'
+u.save
+u.subscribe_to(1)
+u.subscribe_to(2)
+u.subscribe_to(3)
+u.subscribe_to(4)
+u.subscribe_to(5)
+u.subscribe_to(6)

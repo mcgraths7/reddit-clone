@@ -1,13 +1,7 @@
 class TopicsController < ApplicationController
   before_action :only_moderator_can_edit_topic, only: [:edit, :update, :destroy]
   before_action :topic_must_exist, only: [:show, :edit, :update, :destroy]
-  before_action :must_be_logged_in!, only: [:feed, :new, :create, :edit, :update, :destroy]
-
-  def feed
-    subscribed_posts = current_user.subscribed_posts
-    @paginated_feed_posts = subscribed_posts.paginate_ordered_by_hotness(params[:page])
-    render :feed
-  end
+  before_action :must_be_logged_in!, only: [:new, :create, :edit, :update, :destroy]
 
   def new
     @topic = Topic.new
@@ -28,7 +22,8 @@ class TopicsController < ApplicationController
 
   def show
     @topic = set_topic
-    @paginated_posts = set_topic.paginated_posts_ordered_by_hotness(params[:page])
+    posts = set_topic.posts
+    @paginated_posts = posts.paginate_ordered_by_hotness(params[:page])
     render :show
   end
 
