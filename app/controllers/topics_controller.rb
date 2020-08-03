@@ -1,11 +1,7 @@
 class TopicsController < ApplicationController
   before_action :only_moderator_can_edit_topic, only: [:edit, :update, :destroy]
   before_action :topic_must_exist, only: [:show, :edit, :update, :destroy]
-  before_action :must_be_logged_in!
-  def index
-    @paginated_feed_posts = current_user.paginate_feed_posts_ordered_by_karma(params[:page])
-    render :feed
-  end
+  before_action :must_be_logged_in!, only: [:new, :create, :edit, :update, :destroy]
 
   def new
     @topic = Topic.new
@@ -26,7 +22,8 @@ class TopicsController < ApplicationController
 
   def show
     @topic = set_topic
-    @paginated_posts = set_topic.paginated_posts_ordered_by_karma(params[:page])
+    posts = set_topic.posts
+    @paginated_posts = posts.paginate_ordered_by_hotness(params[:page])
     render :show
   end
 
@@ -49,6 +46,27 @@ class TopicsController < ApplicationController
   def destroy
     @topic = set_topic
     @topic.destroy
+  end
+
+  def subscribe
+    @topic = set_topic
+    if current_user.subscribe_to(@topic.id)
+      show
+    else
+      flash.now[:error] = 'Could not subscribe. Please try again'
+      show
+    end
+  end
+
+  def unsubscribe
+    @topic = set_topic
+    subscription = Subscription.find_by(user_id: current_user.id, topic_id: set_topic.id)
+    if subscription.destroy
+      show
+    else
+      flash.now[:error] = 'Could not unsubscribe. Please try again'
+      show
+    end
   end
 
   private

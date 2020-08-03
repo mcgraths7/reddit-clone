@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_31_124347) do
+ActiveRecord::Schema.define(version: 2020_07_31_190113) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2020_07_31_124347) do
     t.string "votable_type"
     t.bigint "votable_id"
     t.integer "karma", default: 0
+    t.float "hotness"
     t.index ["author_id"], name: "index_comments_on_author_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["votable_type", "votable_id"], name: "index_comments_on_votable_type_and_votable_id"
@@ -46,13 +47,14 @@ ActiveRecord::Schema.define(version: 2020_07_31_124347) do
     t.string "url"
     t.text "content", null: false
     t.integer "author_id", null: false
-    t.string "topic_id"
+    t.integer "topic_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "votable_type"
     t.bigint "votable_id"
     t.integer "karma", default: 0
     t.string "slug"
+    t.float "hotness"
     t.index ["slug"], name: "index_posts_on_slug", unique: true
     t.index ["votable_type", "votable_id"], name: "index_posts_on_votable_type_and_votable_id"
   end

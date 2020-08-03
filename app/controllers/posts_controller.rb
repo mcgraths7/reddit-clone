@@ -2,6 +2,14 @@ class PostsController < ApplicationController
   before_action :post_must_exist, only: [:show, :edit, :update]
   before_action :only_owner_can_edit_post, only: [:edit, :update]
   before_action :only_moderator_or_owner_can_destroy_post, only: [:destroy]
+  before_action :cannot_up_or_downvote_own_post, only: [:upvote, :downvote]
+  before_action :must_be_logged_in!, only: [:feed, :new, :create, :edit, :update, :destroy]
+
+  def feed
+    subscribed_posts = current_user.subscribed_posts
+    @paginated_feed_posts = subscribed_posts.paginate_ordered_by_hotness(params[:page])
+    render :feed
+  end
 
   def new
     @post = Post.new
@@ -13,6 +21,7 @@ class PostsController < ApplicationController
     @post.author_id = current_user.id
     @post.topic_id = topic_param[:topic_id]
     if @post.save
+
       render :show
     else
       flash.now[:error] = @post.errors.full_messages
@@ -52,26 +61,27 @@ class PostsController < ApplicationController
   end
 
   def upvote
+    fail
     post = set_post
     author = User.find(post.author_id)
-    post.votes << Vote.create(user_id: author.id, value: 1)
-    if post.update(karma: post.karma + 1) && author.update(post_karma: author.post_karma + 1)
-      show
+    post.votes << Vote.create(user_id: current_user.id, value: 1)
+    if post.update!(karma: post.karma + 1) && author.update!(post_karma: author.post_karma + 1)
+      redirect_to post_url(post)
     else
-      flash.now[:error] = 'There was a problem upvoting.'
-      show
+      flash[:error] = 'There was a problem upvoting.'
+      redirect_to post_url(post)
     end
   end
 
   def downvote
     post = set_post
     author = User.find(post.author_id)
-    post.votes << Vote.create(user_id: author.id, value: -1)
+    post.votes << Vote.create(user_id: current_user.id, value: -1)
     if post.update(karma: post.karma - 1) && author.update(post_karma: author.post_karma - 1)
-      show
+      redirect_to post_url(post)
     else
       flash.now[:error] = 'There was a problem upvoting.'
-      show
+      redirect_to post_url(post)
     end
   end
 
@@ -89,8 +99,8 @@ class PostsController < ApplicationController
   end
 
   def post_must_exist
-    @post = set_post
-    if @post.nil?
+    post = set_post
+    if post.nil?
       flash[:error] = 'Post not found'
       redirect_to topic_url(set_topic)
     end
@@ -107,6 +117,13 @@ class PostsController < ApplicationController
     unless current_user.id === set_post.author_id || current_user.id === set_topic.moderator_id
       flash[:warning] = 'Only the post owner or the topic moderator may destroy this post'
       redirect_to post_url(set_post)
+    end
+  end
+
+  def cannot_up_or_downvote_own_post
+    post = set_post
+    unless Vote.where(votable_id: post.id, votable_type: 'Post', user_id: current_user.id).empty?
+      flash[:warning] =  'You may not upvote or downvote your own post' 
     end
   end
 end

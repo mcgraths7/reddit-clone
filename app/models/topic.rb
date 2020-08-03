@@ -1,5 +1,6 @@
 class Topic < ApplicationRecord
   extend FriendlyId
+  extend PaginatedRecord
 
   friendly_id :title, use: :slugged
   
@@ -18,14 +19,7 @@ class Topic < ApplicationRecord
            source: :user
 
   before_create :set_slug
-
-  def posts_ordered_by_karma
-    posts.order(karma: 'desc')
-  end
-
-  def paginated_posts_ordered_by_karma(page_param)
-    posts_ordered_by_karma.page(page_param)
-  end
+  after_create :subscribe_moderator_on_create
 
   def sub_count
     subscribers.count
@@ -44,5 +38,10 @@ class Topic < ApplicationRecord
   def set_slug
     slug_components = self.title.split(" ").map { |word| word.downcase }
     self.slug = slug_components.join("_") 
+  end
+
+  def subscribe_moderator_on_create
+    mod = User.find(moderator_id)
+    mod.subscribe_to(self.id)
   end
 end

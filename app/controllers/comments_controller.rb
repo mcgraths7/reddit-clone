@@ -1,5 +1,7 @@
 class CommentsController < ApplicationController
   before_action :must_be_logged_in!
+  before_action :cannot_up_or_downvote_own_comment, only: [:upvote, :downvote]
+  
   def new
     @post = Post.find_by(id: params[:post_id]) 
     @comment = Comment.new
@@ -25,11 +27,7 @@ class CommentsController < ApplicationController
   def upvote
     comment = set_comment
     author = User.find(comment.author_id)
-    v = Vote.new(user_id: author.id, value: 1)
-    if v.save
-      comment.votes << v
-    end
-    fail
+    comment.votes << Vote.create(user_id: current_user.id, value: 1)
     if comment.update(karma: comment.karma + 1) && author.update(comment_karma: author.comment_karma + 1)
       redirect_to post_url(comment.post)
     else
@@ -41,7 +39,7 @@ class CommentsController < ApplicationController
   def downvote
     comment = set_comment
     author = User.find(comment.author_id)
-    comment.votes << Vote.create(user_id: author.id, value: -1)
+    comment.votes << Vote.create(user_id: current_user.id, value: -1)
     if comment.update(karma: comment.karma - 1) && author.update(comment_karma: author.comment_karma - 1)
       redirect_to post_url(comment.post)
     else
@@ -91,5 +89,12 @@ class CommentsController < ApplicationController
 
   def set_post
     @post = Post.find_by(id: set_comment.post_id)
+  end
+
+  def cannot_up_or_downvote_own_comment
+    comment = set_comment
+    unless Vote.where(votable_id: comment.id, votable_type: 'Comment', user_id: current_user.id).empty?
+      flash[:warning] =  'You may not upvote or downvote your own comment' 
+    end
   end
 end
