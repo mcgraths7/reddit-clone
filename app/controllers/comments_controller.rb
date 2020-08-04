@@ -25,6 +25,8 @@ class CommentsController < ApplicationController
 
 
   def upvote
+    url = request.url
+    fail
     comment = set_comment
     author = User.find(comment.author_id)
     comment.votes << Vote.create(user_id: current_user.id, value: 1)

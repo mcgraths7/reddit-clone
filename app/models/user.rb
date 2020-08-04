@@ -28,17 +28,23 @@
            through: :subscribed_topics,
            source: :posts
   has_many :posts, inverse_of: :author,
+           foreign_key: :author_id,
+           primary_key: :id,
            dependent: :destroy
   has_many :comments,
            inverse_of: :author,
+           foreign_key: :author_id,
+           primary_key: :id,
            dependent: :destroy
   has_many :votes,
            inverse_of: :user,
            dependent: :destroy
-  has_many :feed_posts,
-           class_name: :Post,
-           through: :subscribed_topics,
-           source: :posts
+
+  def update_karma
+    post_karma = posts.reduce(0) { |acc, post| acc += post.karma }
+    comment_karma = comments.reduce(0) { |acc, comment| acc += comment.karma }
+    self.update(post_karma: post_karma, comment_karma: comment_karma)
+  end
 
   def subscribe_to(topic_id)
     topic = Topic.find_by(id: topic_id)

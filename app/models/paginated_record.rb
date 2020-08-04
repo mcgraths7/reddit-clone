@@ -1,9 +1,9 @@
 module PaginatedRecord
-  def self.ordered_by_hotness
-    self.order(hotness: 'desc')
+  def ordered_by_karma
+    self.order(karma: 'desc')
   end
 
-  def self.paginate_ordered_by_hotness(page_param)
-    self.ordered_by_hotness.page(page_param)
+  def paginate_ordered_by_karma(page_param)
+    self.ordered_by_karma.page(page_param)
   end
 end

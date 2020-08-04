@@ -5,9 +5,14 @@ class PostsController < ApplicationController
   before_action :cannot_up_or_downvote_own_post, only: [:upvote, :downvote]
   before_action :must_be_logged_in!, only: [:feed, :new, :create, :edit, :update, :destroy]
 
+
+  def popular
+    # popular posts
+  end
+
   def feed
     subscribed_posts = current_user.subscribed_posts
-    @paginated_feed_posts = subscribed_posts.paginate_ordered_by_hotness(params[:page])
+    @paginated_feed_posts = subscribed_posts.paginate_ordered_by_karma(params[:page])
     render :feed
   end
 
@@ -61,7 +66,6 @@ class PostsController < ApplicationController
   end
 
   def upvote
-    fail
     post = set_post
     author = User.find(post.author_id)
     post.votes << Vote.create(user_id: current_user.id, value: 1)
