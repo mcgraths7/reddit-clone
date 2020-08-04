@@ -23,7 +23,7 @@ class TopicsController < ApplicationController
   def show
     @topic = set_topic
     posts = set_topic.posts
-    @paginated_posts = posts.paginate_ordered_by_hotness(params[:page])
+    @paginated_posts = posts.paginate_ordered_by_karma(params[:page])
     render :show
   end
 
