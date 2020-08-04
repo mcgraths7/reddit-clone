@@ -2,7 +2,7 @@ class PostsController < ApplicationController
   before_action :post_must_exist, only: [:show, :edit, :update]
   before_action :only_owner_can_edit_post, only: [:edit, :update]
   before_action :only_moderator_or_owner_can_destroy_post, only: [:destroy]
-  before_action :cannot_up_or_downvote_own_post, only: [:upvote, :downvote]
+  # before_action :cannot_up_or_downvote_own_post, only: [:upvote, :downvote]
   before_action :must_be_logged_in!, only: [:feed, :new, :create, :edit, :update, :destroy]
 
 
@@ -65,30 +65,6 @@ class PostsController < ApplicationController
     end
   end
 
-  def upvote
-    post = set_post
-    author = User.find(post.author_id)
-    post.votes << Vote.create(user_id: current_user.id, value: 1)
-    if post.update!(karma: post.karma + 1) && author.update!(post_karma: author.post_karma + 1)
-      redirect_to post_url(post)
-    else
-      flash[:error] = 'There was a problem upvoting.'
-      redirect_to post_url(post)
-    end
-  end
-
-  def downvote
-    post = set_post
-    author = User.find(post.author_id)
-    post.votes << Vote.create(user_id: current_user.id, value: -1)
-    if post.update(karma: post.karma - 1) && author.update(post_karma: author.post_karma - 1)
-      redirect_to post_url(post)
-    else
-      flash.now[:error] = 'There was a problem upvoting.'
-      redirect_to post_url(post)
-    end
-  end
-
   private
   def post_params
     params.require(:post).permit(:title, :content, :url, :topic_id)
@@ -124,10 +100,10 @@ class PostsController < ApplicationController
     end
   end
 
-  def cannot_up_or_downvote_own_post
-    post = set_post
-    unless Vote.where(votable_id: post.id, votable_type: 'Post', user_id: current_user.id).empty?
-      flash[:warning] =  'You may not upvote or downvote your own post' 
-    end
-  end
+  # def cannot_up_or_downvote_own_post
+  #   post = set_post
+  #   unless Vote.where(votable_id: post.id, votable_type: 'Post', user_id: current_user.id).empty?
+  #     flash[:warning] =  'You may not upvote or downvote your own post' 
+  #   end
+  # end
 end
