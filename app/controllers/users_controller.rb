@@ -20,6 +20,7 @@ class UsersController < ApplicationController
 
   def show
     @user = selected_user
+    @user_content = @user.posts.to_a + @user.comments.to_a
     if @user
       render :show
     else

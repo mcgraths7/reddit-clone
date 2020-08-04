@@ -1,1 +1,35 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-9">
+    <ul class="list-group">
+      <% @user_content.each do |item| %>
+        <% if item.respond_to?(:slug) %>
+          <li class="list-group-item">
+            <p><%= link_to item.title, post_path(item) %><small class="text-faded"> by <strong><%= item.author.username %></strong> in <%= link_to item.topic.title, topic_url(item.topic) %></small></p>
+            <div class="container">
+              <p><%= item.author.username %> <small><%= item.karma %> pts.</small> | <small><%= item.readable_timestamp(item.created_at) %></small></p>
+              <p><%= item.content %></p>
+            </div>
+          </li>
+        <% else %>
+          <li class="list-group-item">
+            <p><%= link_to item.post.title, post_path(item.post) %><small class="text-faded"> (self.<%= item.post.topic.title %>)</small></p>
+            <p><small class="text-faded">submitted <%= item.readable_timestamp(item.created_at) %> by <%= item.author.username %> to <%= link_to "/t/#{item.post.topic.title}", topic_url(item.post.topic) %></small></p>
+            <p><%= item.content %></p>
+            <% unless item.parent_comment_id.nil? %>
+              <small><%= link_to 'context', comment_path(item.parent_comment) %></small>
+            <% end %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+    </div>
+    <div class="col-md-3">
+      <h3><%= @user.username %></h3>
+      <h4><%= @user.post_karma %><small class="faded-text"> post karma</small></h4>
+      <h4><%= @user.comment_karma %><small class="faded-text"> comment karma</small></h4>
+    </div>
+  </div>
+</div>
+
 
