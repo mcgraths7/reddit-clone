@@ -19,7 +19,7 @@ class CommentsController < ApplicationController
     @comment = set_comment
     @post = set_post
     @comments_by_parent = set_post.comments_by_parent
-    render :show
+    redirect_to post_url(set_post)
   end
 
   private
