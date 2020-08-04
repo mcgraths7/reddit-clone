@@ -1,28 +1,56 @@
-<div class="container">
-<strong><span><%= @comment.karma %></span> | <%= @comment.author_username %></strong>
-<p><%= @comment.content %></p>
-<small><%= @comment.readable_timestamp(@comment.created_at) %></small>
-<small><%= link_to "Upvote", upvote_comment_url(@comment) %> | <span><%= link_to "Downvote", downvote_comment_url(@comment) %></span></small>
-</div>
-<div class="container">
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-flex col-md-1 justify-content-center align-items-center">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <p><%= @comment.karma %></p>
+        </div>
+        <div class="col-md-6">
+          <p>
+            <span>
+              <%= link_to controller: 'votes', action: 'vote', id: @comment.id, origin: request.fullpath, vote_value: 1  do %>
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+                  <path fill-rule="evenodd" d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"/>
+                </svg>
+              <% end %>
+            </span>
+            <span>
+              <%= link_to controller: 'votes', action: 'vote', id: @comment.id, origin: request.fullpath, vote_value: -1  do %>
+                  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.646 9.646a.5.5 0 0 1 .708 0L8 12.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                    <path fill-rule="evenodd" d="M8 2.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5z"/>
+                  </svg>
+              <% end %>            
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <strong><%= link_to @comment.author_username, user_url(@comment.author) %><span class="badge"><small><%= @comment.karma %> pts. | <%= @comment.readable_timestamp(@comment.created_at) %></small></span></strong>
+      <p><%= @comment.content %></p>
+    </div>
+  </div>
 
-  <%= form_for :reply, method: 'post', url: comments_url do |f| %>
+  <div class="container-fluid">
+
+    <%= form_for :reply, method: 'post', url: comments_url do |f| %>
+    
+      <div class="form-group">
+        <%= f.text_area :content, class: 'form-control' %>
+      </div>
+
+      <input type="hidden" name="reply[post_id]" value="<%= @post.id %>">
+      <input type="hidden" name="reply[parent_comment_id]" value="<%= @comment.id %>">
+
+      <div class="form-group">
+        <%= f.submit "Reply", class: 'btn btn-primary' %>
+      </div>
+
+    <% end %>
+  </div>
   
-    <div class="form-group">
-      <%= f.text_area :content, class: 'form-control' %>
-    </div>
-
-    <input type="hidden" name="reply[post_id]" value="<%= @post.id %>">
-    <input type="hidden" name="reply[parent_comment_id]" value="<%= @comment.id %>">
-
-    <div class="form-group">
-      <%= f.submit "Reply", class: 'btn btn-primary' %>
-    </div>
-
-  <% end %>
-</div>
-
-<div class="container">
   <ul class="list-group">
     <% @comments_by_parent[@comment.id].select { |c| c.parent_comment_id === @comment.id }.each do |child_comment| %>
       <li class="list-group-item">

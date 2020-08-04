@@ -1,50 +1,94 @@
-<div class="container">
-  <h2><span class="badge"><%= @post.karma %></span><%= @post.title %></h2>
-  <% if @post.url %>
-    <small><%= @post.url %></small>
-  <% end %>
-  <p><%= @post.content %></p>
-    <span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %>  
-        by <%= link_to @post.author_username, user_url(@post.author) %> to 
-        <%=link_to @post.topic_title, topic_url(@post.topic) %>
-    </span>
-  <br>
-</div>
-<br>
-<div class="container">
-  <p>Add comment</p>
-  <%= form_for :comment, method: 'post', url: comments_url do |f| %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="row">
+        <div class="d-flex col-md-1 justify-content-center align-items-center">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <p><%= @post.karma %></p>
+            </div>
+            <div class="col-md-6">
+              <p>
+                <span>
+                  <%= link_to controller: 'votes', action: 'vote', id: @post.slug, origin: request.fullpath, vote_value: 1  do %>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+                      <path fill-rule="evenodd" d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"/>
+                    </svg>
+                  <% end %>
+                </span>
+                <span>
+                  <%= link_to controller: 'votes', action: 'vote', id: @post.slug, origin: request.fullpath, vote_value: -1  do %>
+                      <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M4.646 9.646a.5.5 0 0 1 .708 0L8 12.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                        <path fill-rule="evenodd" d="M8 2.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5z"/>
+                      </svg>
+                  <% end %>            
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <strong><%= @post.content %></strong>
+          <% if @post.url %>
+            <small><%= link_to @post.url, @post.url %><%= @post.url %></small>
+          <% end %>
+          <p>
+            <span class="badge">Posted <%= @post.readable_timestamp(@post.created_at) %>  
+                by <%= link_to @post.author_username, user_url(@post.author) %>
+            </span>
+          </p>
+          <p>
+            <span class="badge"><%= @post.comments.count %> comments</span>
+          </p>
+
   
-    <div class="form-group">
-      <%= f.text_area :content, class: 'form-control' %>
-    </div>
+        </div>
+            <div class="container">
+          <p>Add comment</p>
+          <%= form_for :comment, method: 'post', url: comments_url do |f| %>
+          
+            <div class="form-group">
+              <%= f.text_area :content, class: 'form-control' %>
+            </div>
 
-    <input type="hidden" name="comment[post_id]" value="<%= @post.id %>">
+            <input type="hidden" name="comment[post_id]" value="<%= @post.id %>">
 
-    <div class="form-group">
-      <%= f.submit "Reply", class: 'btn btn-primary' %>
-    </div>
+            <div class="form-group">
+              <%= f.submit "Reply", class: 'btn btn-primary' %>
+            </div>
 
-  <% end %>
-</div>
-<div class="container">
+          <% end %>
+        
+        
+        </div>
+      </div>
+      <h4>Comments</h4>
+      <% if @post.top_level_comments.empty? %>
 
-<div class="container">
+        <p>It's quiet... Too quiet. Be the first to comment!</p>
 
-  <h4>Comments</h4>
-
-  <% if @post.top_level_comments.empty? %>
-
-    <p>It's quiet... Too quiet. Be the first to comment!</p>
-
-  <% else %>
-    <ul class="list-group">
-      <% @comments_by_parent[nil].select { |c| c.parent_comment_id.nil? }.each do |top_level_comment| %>
-        <li class="list-group-item">
-          <%= render("comments/comment", comment: top_level_comment, comments_by_parent: @comments_by_parent) %>
-        </li>
+      <% else %>
+        <ul class="list-group">
+          <% @comments_by_parent[nil].select { |c| c.parent_comment_id.nil? }.each do |top_level_comment| %>
+            <li class="list-group-item">
+              <%= render("comments/comment", comment: top_level_comment, comments_by_parent: @comments_by_parent) %>
+            </li>
+          <% end %>
+        </ul>
       <% end %>
-  </ul>
-  <% end %>
-  <%= link_to "Back to feed", feed_url %>
+      <%= link_to "Back to feed", feed_url %>
+    </div>
+    <div class="col-md-3">
+      <p>Welcome to <%=link_to @post.topic_title, topic_url(@post.topic) %></p>
+      <p>A community since <%= @post.topic.created_at.year %></p>
+      <p>Community moderator: <%= User.find(@post.topic.moderator_id).username %></p>
+      <p><%= @post.topic.description %></p>
+      <p><%= @post.topic.subscribers.count %> subscribers</p>
+      
+    </div>
+  </div>  
 </div>
+
+  

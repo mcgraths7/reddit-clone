@@ -1,6 +1,6 @@
 class Comment < ApplicationRecord
-  extend PaginatedRecord
   include Votable
+  extend PaginatedRecord
 
   validates :content, presence: true
 

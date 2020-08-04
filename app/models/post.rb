@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
+  include Votable
   extend FriendlyId
   extend PaginatedRecord
-  include Votable
 
   friendly_id :title, use: :slugged
   
