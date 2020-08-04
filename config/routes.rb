@@ -1,25 +1,34 @@
 Rails.application.routes.draw do
-  resources :users, only: [:show, :edit, :update, :destroy]
-  resources :topics, except: [:index]
   resources :posts do
     get 'comments/new' => 'comments#new', as: 'new_comment'
   end
   resources :comments, only: [:create, :show, :edit, :destroy]
   get 'feed' => 'posts#feed'
-  get 'topics/:id' => 'topics#show'
-  get 'topics/:id/subscribe' => 'topics#subscribe', as: 'subscribe'
-  get 'topics/:id/unsubscribe' => 'topics#unsubscribe', as: 'unsubscribe'
+  
+  # Rename url for "topics" as "/t/:id"
+  get 't' => 'topics#index', as: 'all_topics'
+  post 't' => 'topics#create', as: 'topics'
+  get 't/new' => 'topics#new', as: 'new_topic'
+  get 't/:id/edit' => 'topics#edit', as: 'edit_topic'
+  get 't/:id' => 'topics#show', as: 'show_topic'
+  patch 't/:id' => 'topics#update', as: 'update_topic'
+  delete 't/:id' => 'topics#destroy', as: 'destroy_topic'
+  get 't/:id/subscribe' => 'topics#subscribe', as: 'subscribe'
+  get 't/:id/unsubscribe' => 'topics#unsubscribe', as: 'unsubscribe'
+
+  # Rename url for "users" as "/u/:id"
+  get 'u' => 'user#index', as: 'all_users'
+  get 'u/:id/edit' => 'users#edit', as: 'edit_user'
+  get 'u/:id' => 'users#show', as: 'show_user'
+  patch 'u/:id' => 'users#update', as: 'update_user'
+  delete 'u/:id' => 'users#destroy', as: 'destroy_tuser'
   get 'signup' => 'users#new'
   post 'signup' => 'users#create'
+  
   get 'login' => 'sessions#new'
   post 'login' => 'sessions#create'
   get 'logout' => 'sessions#destroy'
-  get 'posts/:id/upvote' => 'posts#upvote', as: 'upvote_post'
-  get 'posts/:id/downvote' => 'posts#downvote', as: 'downvote_post'
-  get 'comments/:id/upvote' => 'comments#upvote', as: 'upvote_comment'
-  get 'comments/:id/downvote' => 'comments#downvote', as: 'downvote_comment'
-  get 'upvote' => 'votes#upvote'
-  get 'downvote' => 'votes#downvote'
+  
   get 'vote' => 'votes#vote'
 
   root to: 'posts#feed'

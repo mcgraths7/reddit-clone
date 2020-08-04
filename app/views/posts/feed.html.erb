@@ -2,7 +2,6 @@
   <div class="d-flex justify-content-center"><h2>Feed</h2></div>
   <div class="row">
     <% @paginated_feed_posts.each do |post| %>
-      <% cache post do %>
       <div class="d-flex col-md-1 justify-content-center align-items-center">
         <div class="row align-items-center">
           <div class="col-md-6">
@@ -36,12 +35,11 @@
         (<small class="faded-text"><%= post.url %></small>)
       <% end %>
       <br>
-      <small>Submitted <%= post.readable_timestamp(post.created_at) %> by <%= link_to post.author_username, user_url(post.author) %></small>
+      <small>Submitted <%= post.readable_timestamp(post.created_at) %> by <%= link_to post.author_username, user_url(post.author) %> to <%= link_to post.topic.title, topic_url(post.topic) %></small>
       <br>
       <small><strong><%= post.comments.count %> comments</strong></small>
     </div>
     <div class="col-md-3"></div>
-    <% end %>
     <% end %>
   </div>
   <nav aria-label="Feed Navigation">

@@ -4,17 +4,20 @@ class VotesController < ApplicationController
   def vote
     votable = set_post_or_comment
     author = User.find(votable.author_id)
+    friendly_id = params[:origin].split('/').last # captures the end of the origin url, which includes the id
     # If votable responds to "slug", it's a post. Otherwise, it's a comment. Nil if the vote isn't found
     found_vote_type = votable.respond_to?(:slug) ? 'Post' : 'Comment'
     Vote.toggle_vote(current_user.id, found_vote_type, votable.id, params[:vote_value].to_i)
     if params[:origin] === '/feed' || params[:origin] === '/'
       redirect_to feed_url
     elsif params[:origin].include?('posts')
-      post_friendly_id = params[:origin].split('/').last # captures the end of the origin url, which includes the id
-      post = Post.friendly.find(post_friendly_id)
+      post = Post.friendly.find(friendly_id)
       redirect_to post_url(post)
     elsif params[:origin].include?('comments')
       redirect_to comment_url(set_post_or_comment)
+    elsif params[:origin].include?('/t')
+      topic = Topic.friendly.find(friendly_id)
+      redirect_to topic_url(topic)
     end
   end
 

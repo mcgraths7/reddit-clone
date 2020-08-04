@@ -1,36 +1,48 @@
 <div class="container">
-  <h2><%= @topic.title %></h2>
-  <% if current_user.subscribed_topics.where(id: @topic.id).empty? %>
-    <%= link_to "Subscribe", subscribe_url(@topic) %>
-  <% else %>
-    <%= link_to 'Unsubscribe', unsubscribe_url(@topic) %>
-  <% end %>
-  
-  <p><%= @topic.description %></p>
-  <small>A community since <%= @topic.created_at.year %> | <%= @topic.sub_count %> subscriber(s)</small>
-  
-  <% @paginated_posts.each do |post| %>
-  
-  <div class="col-md-12">
-  
-    <h2><span class="badge"><%= post.karma %></span><%= link_to "#{post.title}", post_url(post) %></h2>
-  
-    <% if post.url %>
-      <small><%= post.url %></small>
+  <div class="d-flex justify-content-center"><h2>/t/<%= @topic.title %></h2></div>
+  <div class="row">
+    <% @paginated_posts.each do |post| %>
+      <div class="d-flex col-md-1 justify-content-center align-items-center">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <p><%= post.karma %></p>
+          </div>
+          <div class="col-md-6">
+            <p>
+              <span>
+                <%= link_to controller: 'votes', action: 'vote', id: post.slug, origin: request.fullpath, vote_value: 1  do %>
+                  <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"/>
+                  </svg>
+                <% end %>
+              </span>
+              <span>
+                <%= link_to controller: 'votes', action: 'vote', id: post.slug, origin: request.fullpath, vote_value: -1  do %>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-down" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" d="M4.646 9.646a.5.5 0 0 1 .708 0L8 12.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"/>
+                      <path fill-rule="evenodd" d="M8 2.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V3a.5.5 0 0 1 .5-.5z"/>
+                    </svg>
+                <% end %>            
+              </span>
+            </p>
+          </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+      <strong><%= link_to post.title, post_url(post) %> </strong>
+      <% if post.url %>
+        (<small class="faded-text"><%= post.url %></small>)
+      <% end %>
+      <br>
+      <small>Submitted <%= post.readable_timestamp(post.created_at) %> by <%= link_to post.author_username, user_url(post.author) %></small>
+      <br>
+      <small><strong><%= post.comments.count %> comments</strong></small>
+    </div>
+    <div class="col-md-3"></div>
     <% end %>
-  
-    <p><%= post.short_content %></p>
-  
-    <span class="badge">Posted <%= post.readable_timestamp(post.created_at) %>  
-        by <%= link_to post.author_username, user_url(post.author) %> to 
-        <%=link_to post.topic_title, topic_url(post.topic) %>
-    </span>
- 
   </div>
- 
-  <% end %>
- 
-  <nav aria-label="Feed Navigation">
+  <nav aria-label="Topic Navigation">
 
     <div class="row">
 
