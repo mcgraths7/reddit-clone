@@ -1,6 +1,5 @@
 class CommentsController < ApplicationController
   before_action :must_be_logged_in!
-  before_action :cannot_up_or_downvote_own_comment, only: [:upvote, :downvote]
   
   def new
     @post = Post.find_by(id: params[:post_id]) 
@@ -21,33 +20,6 @@ class CommentsController < ApplicationController
     @post = set_post
     @comments_by_parent = set_post.comments_by_parent
     render :show
-  end
-
-
-  def upvote
-    url = request.url
-    fail
-    comment = set_comment
-    author = User.find(comment.author_id)
-    comment.votes << Vote.create(user_id: current_user.id, value: 1)
-    if comment.update(karma: comment.karma + 1) && author.update(comment_karma: author.comment_karma + 1)
-      redirect_to post_url(comment.post)
-    else
-      flash[:error] = 'There was a problem upvoting.'
-      redirect_to post_url(comment.post)
-    end
-  end
-
-  def downvote
-    comment = set_comment
-    author = User.find(comment.author_id)
-    comment.votes << Vote.create(user_id: current_user.id, value: -1)
-    if comment.update(karma: comment.karma - 1) && author.update(comment_karma: author.comment_karma - 1)
-      redirect_to post_url(comment.post)
-    else
-      flash[:error] = 'There was a problem upvoting.'
-      redirect_to post_url(comment.post)
-    end
   end
 
   private

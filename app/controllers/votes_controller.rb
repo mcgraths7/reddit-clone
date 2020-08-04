@@ -1,4 +1,6 @@
 class VotesController < ApplicationController
+  # before_action :cannot_up_or_downvote_own_comment, only: [:vote]
+
   def vote
     votable = set_post_or_comment
     author = User.find(votable.author_id)
@@ -8,7 +10,9 @@ class VotesController < ApplicationController
     if params[:origin] === '/feed' || params[:origin] === '/'
       redirect_to feed_url
     elsif params[:origin].include?('posts')
-      redirect_to post_url(set_post_or_comment)
+      post_friendly_id = params[:origin].split('/').last # captures the end of the origin url, which includes the id
+      post = Post.friendly.find(post_friendly_id)
+      redirect_to post_url(post)
     elsif params[:origin].include?('comments')
       redirect_to comment_url(set_post_or_comment)
     end
@@ -33,19 +37,11 @@ class VotesController < ApplicationController
     Comment.find(params[:id])
   end
 
-  def render_feed
-    pc = PostsController.new
-    pc.request = request
-    pc.response = response
-    pc.process(:feed)
-  end
-
-  def render_post(post)
-    pc = PostsController.new
-    pc.request = request
-    pc.response = response
-    @post = post
-    pc.show
-  end
+  # def cannot_up_or_downvote_own_comment
+  #   comment = set_comment
+  #   unless Vote.where(votable_id: comment.id, votable_type: 'Comment', user_id: current_user.id).empty?
+  #     flash[:warning] =  'You may not upvote or downvote your own comment' 
+  #   end
+  # end
 
 end
