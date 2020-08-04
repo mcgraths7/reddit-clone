@@ -28,33 +28,20 @@
       </div>
     </div>
     <div class="col-md-9">
-      <strong><%= link_to @comment.author_username, user_url(@comment.author) %><span class="badge"><small><%= @comment.karma %> pts. | <%= @comment.readable_timestamp(@comment.created_at) %></small></span></strong>
+      <strong><%= link_to @comment.author_username, user_url(@comment.author) %><span class="badge"><small><%= @comment.readable_timestamp(@comment.created_at) %></small></span></strong>
       <p><%= @comment.content %></p>
     </div>
   </div>
 
   <div class="container-fluid">
-
-    <%= form_for :reply, method: 'post', url: comments_url do |f| %>
-    
-      <div class="form-group">
-        <%= f.text_area :content, class: 'form-control' %>
-      </div>
-
-      <input type="hidden" name="reply[post_id]" value="<%= @post.id %>">
-      <input type="hidden" name="reply[parent_comment_id]" value="<%= @comment.id %>">
-
-      <div class="form-group">
-        <%= f.submit "Reply", class: 'btn btn-primary' %>
-      </div>
-
-    <% end %>
+    <strong>Reply to this comment</strong>
+    <%= render 'form', comment: @new_comment %>
   </div>
-  
   <ul class="list-group">
-    <% @comments_by_parent[@comment.id].select { |c| c.parent_comment_id === @comment.id }.each do |child_comment| %>
-      <li class="list-group-item">
-        <%= render("comments/comment", comment: child_comment, comments_by_parent: @comments_by_parent) %>
+    <% comments_by_parent = @comment.post.comments_by_parent %>
+    <% comments_by_parent[@comment.id].each do |child_comment| %>
+      <li class="list-group-item">  
+        <%= render("comments/comment", comment: child_comment, comments_by_parent: comments_by_parent) %>
       </li>
     <% end %>
   </ul>

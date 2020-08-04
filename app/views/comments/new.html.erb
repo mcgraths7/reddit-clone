@@ -1,18 +1,5 @@
 <div class="container">
   <h2>New Comment</h2>
 
-  <%= form_for :comment, method: 'post', url: comments_url do |f| %>
-  
-    <div class="form-group">
-      <%= f.text_area :content, class: 'form-control', autofocus: true %>
-    </div>
-
-    <input type="hidden" name="comment[post_id]" value="<%= @post.id %>">
-
-
-    <div class="form-group">
-      <%= f.submit "Add comment", class: 'btn btn-primary' %>
-    </div>
-
-  <% end %>
+  <%= render "form", comment: @comment %>
 </div>

@@ -28,17 +28,17 @@
       </div>
     </div>
     <div class="col-md-9">
-      <strong><%= link_to comment.author_username, user_url(comment.author) %><span class="badge"><small><%= comment.karma %> pts. | <%= comment.readable_timestamp(comment.created_at) %></small></span></strong>
+      <strong><%= link_to comment.author_username, user_url(comment.author) %><span class="badge"><small><%= comment.readable_timestamp(comment.created_at) %></small></span></strong>
       <p><%= comment.content %></p>
-      <%= link_to 'View thread', comment_url(comment) %>
-      </div>
+      <p><span><%= link_to 'View thread', comment_url(comment) %></span> | <span><%= link_to 'Back to post', post_url(comment.post) %></span></p>
+      <ul class="list-group">
+        <% comments_by_parent[comment.id].each do |child_comment| %>
+          <li class="list-group-item">
+            <%= render("comments/comment", comment: child_comment, comments_by_parent: comments_by_parent) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
   </div>
-  
-  <ul class="list-group">
-    <% comments_by_parent[comment.id].select { |c| c.parent_comment_id === comment.id }.each do |child_comment| %>
-      <li class="list-group-item">
-        <%= render("comments/comment", comment: child_comment, comments_by_parent: comments_by_parent) %>
-      </li>
-    <% end %>
-  </ul>
-</div>
+
+

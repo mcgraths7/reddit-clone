@@ -36,7 +36,6 @@ class PostsController < ApplicationController
 
   def show
     @post = set_post
-    @comments_by_parent = @post.comments_by_parent
     render :show
   end
 
